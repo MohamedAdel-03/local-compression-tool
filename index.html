@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>el tool el gamda</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="
+    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding-top: 40px;
+">
+
+<div style="
+    width: 90%;
+    max-width: 500px;
+    background: #1c1c1c;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.6);
+">
+    <h1 style="
+        text-align: center;
+        font-weight: 300;
+        margin-bottom: 25px;
+    ">ID Tool</h1>
+
+    <!-- Generate Button -->
+    <button onclick="handleGenerate()" style="
+        width: 100%;
+        padding: 12px;
+        background: #0078ff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        transition: 0.2s;
+        margin-top: 10px;
+    "
+    onmouseover="this.style.background='#005fcc'"
+    onmouseout="this.style.background='#0078ff'"
+    >
+        Generate Dummy ID
+    </button>
+
+    <div id="generated" style="
+        background: #111;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 18px;
+        text-align: center;
+        border: 1px solid #333;
+    "></div>
+
+    <!-- Input for validation -->
+    <input id="validateInput" maxlength="14" placeholder="Enter ID to Validate" style="
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background: #222;
+        color: white;
+        font-size: 16px;
+    " />
+
+    <button onclick="handleValidate()" style="
+        width: 100%;
+        padding: 12px;
+        background: #0078ff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+        transition: 0.2s;
+        margin-top: 10px;
+    "
+    onmouseover="this.style.background='#005fcc'"
+    onmouseout="this.style.background='#0078ff'"
+    >
+        Validate ID
+    </button>
+
+    <div id="validateResult" style="
+        background: #111;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 18px;
+        text-align: center;
+        border: 1px solid #333;
+    "></div>
+    <!-- Image compression -->
+    <style>
+      .cmp { margin-top: 32px; padding-top: 24px; border-top: 1px solid #2a2a2a; }
+      .cmp h2 { margin: 0 0 4px; font-weight: 500; font-size: 20px; letter-spacing: 0.3px;
+                background: linear-gradient(90deg, #4da3ff, #9b6bff); -webkit-background-clip: text; background-clip: text; color: transparent; text-align: center; }
+      .cmp .sub { color: #8a8a8a; font-size: 12px; text-align: center; margin: 0 0 18px; }
+
+      .cmp .drop { position: relative; display: block; border: 1.5px dashed #3a3a3a; border-radius: 14px; padding: 28px 16px; text-align: center;
+                   background: linear-gradient(180deg, #181818, #141414); cursor: pointer; transition: border-color .2s, background .2s, transform .15s; }
+      .cmp .drop:hover, .cmp .drop.over { border-color: #4da3ff; background: linear-gradient(180deg, #1a2230, #141a24); }
+      .cmp .drop.over { transform: scale(1.01); }
+      .cmp .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+      .cmp .drop .ico { width: 40px; height: 40px; margin: 0 auto 10px; border-radius: 12px; display: grid; place-items: center;
+                        background: linear-gradient(135deg, #0078ff, #7b3fff); box-shadow: 0 6px 18px rgba(0,120,255,.35); font-size: 20px; }
+      .cmp .drop b { color: #fff; font-weight: 500; }
+      .cmp .drop small { display: block; color: #777; margin-top: 4px; font-size: 12px; }
+
+      .cmp .quality { display: flex; align-items: center; gap: 12px; margin: 16px 0 6px; font-size: 13px; color: #bbb; }
+      .cmp .quality output { min-width: 42px; text-align: right; font-variant-numeric: tabular-nums; color: #fff; font-weight: 600; }
+      .cmp input[type=range] { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 6px; margin: 0;
+                               background: linear-gradient(90deg, #0078ff var(--p, 60%), #2a2a2a var(--p, 60%)); outline: none; }
+      .cmp input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff;
+                               border: 3px solid #0078ff; box-shadow: 0 2px 8px rgba(0,0,0,.5); cursor: grab; transition: transform .15s; }
+      .cmp input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+      .cmp .row { display: flex; align-items: center; gap: 14px; padding: 12px; margin-top: 10px; border-radius: 12px;
+                  background: #151515; border: 1px solid #262626; animation: cmpIn .3s ease both; }
+      @keyframes cmpIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+      .cmp .thumb { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; background: #222; flex-shrink: 0; border: 1px solid #2e2e2e; }
+      .cmp .thumb.pending { background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+      @keyframes shimmer { to { background-position: -200% 0; } }
+      .cmp .meta { flex: 1; min-width: 0; }
+      .cmp .name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #eee; }
+      .cmp .status { font-size: 12px; color: #8a8a8a; margin-top: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      .cmp .pill { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: .2px; }
+      .cmp .pill.ok { background: rgba(76,175,80,.15); color: #6fdc74; }
+      .cmp .pill.warn { background: rgba(255,183,77,.15); color: #ffb74d; }
+      .cmp .pill.err { background: rgba(255,82,82,.15); color: #ff6b6b; }
+      .cmp .bar { height: 4px; border-radius: 4px; background: #262626; margin-top: 6px; overflow: hidden; }
+      .cmp .bar i { display: block; height: 100%; width: 0; border-radius: 4px; background: linear-gradient(90deg, #0078ff, #7b3fff); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+
+      .cmp .btn { padding: 9px 14px; border: none; border-radius: 9px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+                  background: linear-gradient(135deg, #0078ff, #5b4bff); box-shadow: 0 4px 14px rgba(0,120,255,.3); transition: transform .15s, box-shadow .15s, opacity .2s; }
+      .cmp .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,120,255,.45); }
+      .cmp .btn:disabled { opacity: .35; cursor: default; box-shadow: none; }
+      .cmp .btn.wide { width: 100%; padding: 13px; font-size: 15px; margin-top: 14px; display: none; }
+    </style>
+
+    <section class="cmp">
+      <h2>Compress Images</h2>
+      <p class="sub">Always re-encodes &middot; keeps resolution up to 4096 px &middot; files up to 100 MB</p>
+
+      <label class="drop" id="dropZone">
+        <input id="imageInput" type="file" accept="image/*" multiple onchange="handleCompress(this.files)" />
+        <div class="ico">&#8679;</div>
+        <b>Drop images here</b> or click to browse
+        <small>JPEG &middot; PNG &middot; WebP &middot; multiple files OK</small>
+      </label>
+
+      <div class="quality">
+        Quality
+        <input id="qualityInput" type="range" min="0.3" max="0.95" step="0.05" value="0.75" oninput="updateQuality(this)" />
+        <output id="qualityValue">75%</output>
+      </div>
+
+      <div id="compressResults"></div>
+
+      <button id="downloadAllBtn" class="btn wide" onclick="handleDownloadAll()">Download All</button>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+<script>
+/* ----------------- ORIGINAL LOGIC (Browser-Compatible) ----------------- */
+
+const VALID_GOVERNORATES = [
+  '01','02','03','04','11','12','13','14','15','16','17','18','19',
+  '21','22','23','24','25','26','27','28','29','31','32','33','34','35','88'
+];
+
+const validateChecksum = (id) => {
+  const weights = [2,7,6,5,4,3,2,7,6,5,4,3,2];
+  const sum = id
+    .slice(0, 13)
+    .split('')
+    .reduce((acc, digit, i) => acc + parseInt(digit, 10) * weights[i], 0);
+
+  let checksum = 11 - (sum % 11);
+  checksum = checksum === 10 ? 0 : checksum === 11 ? 1 : checksum;
+
+  return checksum === parseInt(id[13], 10);
+};
+
+function validateID(id) {
+  if (!id || id.length !== 14 || !/^\d+$/.test(id)) return false;
+
+  const century = id[0];
+  if (century !== '2' && century !== '3') return false;
+
+  const month = parseInt(id.substring(3, 5), 10);
+  if (month < 1 || month > 12) return false;
+
+  const day = parseInt(id.substring(5, 7), 10);
+  if (day < 1 || day > 31) return false;
+
+  const governorate = id.substring(7, 9);
+  if (!VALID_GOVERNORATES.includes(governorate)) return false;
+
+  const uniqueNumber = id.substring(9, 12);
+  if (uniqueNumber === '000') return false;
+
+  return validateChecksum(id);
+}
+
+function generateDummyID() {
+  let attempts = 0;
+  const maxAttempts = 100;
+
+  while (attempts < maxAttempts) {
+    const century = 2;
+    const year = Math.floor(Math.random() * 50) + 50;
+    const month = Math.floor(Math.random() * 12) + 1;
+    const day = Math.floor(Math.random() * 28) + 1;
+
+    const governorate =
+      VALID_GOVERNORATES[Math.floor(Math.random() * VALID_GOVERNORATES.length)];
+
+    const uniqueNumber = (Math.floor(Math.random() * 999) + 1)
+      .toString().padStart(3, '0');
+
+    const genderDigit = Math.floor(Math.random() * 10);
+
+    const first13Digits = `${century}${year.toString().padStart(2,'0')}${month.toString().padStart(2,'0')}${day.toString().padStart(2,'0')}${governorate}${uniqueNumber}${genderDigit}`;
+
+    const weights = [2,7,6,5,4,3,2,7,6,5,4,3,2];
+    const sum = first13Digits
+      .split('')
+      .reduce((acc, digit, i) => acc + parseInt(digit, 10) * weights[i], 0);
+
+    let checksum = 11 - (sum % 11);
+    checksum = checksum === 10 ? 0 : checksum === 11 ? 1 : checksum;
+
+    const id = `${first13Digits}${checksum}`;
+
+    if (validateID(id)) return id;
+
+    attempts++;
+  }
+
+  throw new Error("Failed to generate valid ID");
+}
+
+/* ----------------- UI HANDLERS ----------------- */
+
+function handleGenerate() {
+  const id = generateDummyID();
+  const box = document.getElementById("generated");
+  box.textContent = id;
+}
+
+function handleValidate() {
+  const value = document.getElementById("validateInput").value.trim();
+  const valid = validateID(value);
+
+  const box = document.getElementById("validateResult");
+  box.textContent = valid ? "Valid ID" : "Invalid ID";
+  box.style.color = valid ? "#4caf50" : "#ff5252";
+}
+
+/* ----------------- IMAGE COMPRESSION ----------------- */
+// Mirrors libs/utils/src/lib/compress-image.util.ts in sylndr-admin-monorepo.
+
+function getCompressOptions() {
+  const quality = parseFloat(document.getElementById('qualityInput').value) || 0.75;
+  return {
+    // Huge cap so the lib never bails out early; size is driven by quality.
+    maxSizeMB: 100,
+    maxWidthOrHeight: 4096,
+    initialQuality: quality,
+    useWebWorker: true,
+  };
+}
+
+const compressedFiles = [];
+
+async function compressImageFile(file) {
+  if (!file.type.startsWith('image/')) return file;
+
+  const compressed = await imageCompression(file, getCompressOptions());
+
+  // Never hand back something bigger than the input (e.g. already-optimised PNGs).
+  if (compressed.size >= file.size) return file;
+
+  // Keep original filename and MIME type, same as the dashboard util.
+  return new File([compressed], file.name, { type: file.type });
+}
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 2)} ${sizes[i]}`;
+}
+
+function downloadFile(file) {
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function updateQuality(el) {
+  document.getElementById('qualityValue').textContent = Math.round(el.value * 100) + '%';
+  el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min)) * 100 + '%');
+}
+
+function renderRow(id, name, origSize) {
+  return `
+    <div id="${id}" class="row">
+      <img data-role="preview" class="thumb pending" alt="" />
+      <div class="meta">
+        <div class="name" title="${name}">${name}</div>
+        <div data-role="status" class="status">${formatFileSize(origSize)} <span class="pill warn">compressing</span></div>
+        <div class="bar"><i data-role="bar"></i></div>
+      </div>
+      <button data-role="download" class="btn" disabled>Download</button>
+    </div>`;
+}
+
+async function handleCompress(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
+  const results = document.getElementById('compressResults');
+  const downloadAllBtn = document.getElementById('downloadAllBtn');
+  results.innerHTML = '';
+  compressedFiles.length = 0;
+  downloadAllBtn.style.display = 'none';
+
+  const rows = files.map((file, i) => {
+    const id = `cmp-${Date.now()}-${i}`;
+    results.insertAdjacentHTML('beforeend', renderRow(id, file.name, file.size));
+    return { file, el: document.getElementById(id) };
+  });
+
+  await Promise.all(rows.map(async ({ file, el }) => {
+    const status = el.querySelector('[data-role="status"]');
+    const btn = el.querySelector('[data-role="download"]');
+    const img = el.querySelector('[data-role="preview"]');
+    const bar = el.querySelector('[data-role="bar"]');
+
+    const enable = (f) => {
+      btn.disabled = false;
+      btn.onclick = () => downloadFile(f);
+      compressedFiles.push(f);
+    };
+
+    if (!file.type.startsWith('image/')) {
+      img.classList.remove('pending');
+      status.innerHTML = `${formatFileSize(file.size)} <span class="pill err">not an image</span>`;
+      return;
+    }
+
+    try {
+      const compressed = await compressImageFile(file);
+      const saved = file.size > 0 ? Math.round((1 - compressed.size / file.size) * 100) : 0;
+
+      img.src = URL.createObjectURL(compressed);
+      img.classList.remove('pending');
+
+      if (compressed === file) {
+        status.innerHTML = `${formatFileSize(file.size)} <span class="pill warn">already optimal</span>`;
+        bar.style.width = '100%';
+        enable(file);
+        return;
+      }
+
+      status.innerHTML = `${formatFileSize(file.size)} \u2192 <strong style="color:#fff">${formatFileSize(compressed.size)}</strong> <span class="pill ok">\u2212${saved}%</span>`;
+      requestAnimationFrame(() => { bar.style.width = `${Math.max(4, 100 - saved)}%`; });
+      enable(compressed);
+    } catch (err) {
+      console.error(err);
+      img.classList.remove('pending');
+      status.innerHTML = `<span class="pill err">failed</span> ${err.message || err}`;
+    }
+  }));
+
+  if (compressedFiles.length > 1) downloadAllBtn.style.display = 'block';
+}
+
+/* drag & drop */
+(() => {
+  const zone = document.getElementById('dropZone');
+  ['dragenter', 'dragover'].forEach((e) => zone.addEventListener(e, (ev) => { ev.preventDefault(); zone.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((e) => zone.addEventListener(e, (ev) => { ev.preventDefault(); zone.classList.remove('over'); }));
+  zone.addEventListener('drop', (ev) => handleCompress(ev.dataTransfer.files));
+  updateQuality(document.getElementById('qualityInput'));
+})();
+
+function handleDownloadAll() {
+  compressedFiles.forEach((file, i) => setTimeout(() => downloadFile(file), i * 300));
+}
+</script>
+
+</body>
+</html>
